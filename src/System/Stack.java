@@ -21,6 +21,10 @@ public class Stack {
 		return return_node;
 	}
 	
+	public Node peek() {
+		return first;
+	}
+	
 	public void print() {
 		for(Node current = first; current != null; current = current.next)
 			System.out.println("(" + current.startingState + ", " + current.endingState + ")");

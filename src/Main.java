@@ -54,14 +54,51 @@ public abstract class Main {
 				counter++;
 				break;
 			case ')':
-				// get return state number.
-				Node top = stack.pop();
-				// creates State with ending number.
-				automaton.addState(new State(top.getEnd()));
-				// link this state with the ending state above. 
-				automaton.getState(stateNumber).addLinkedState(top.getEnd(), '_');
-				// sets new state number.
-				stateNumber = top.getEnd();
+				closingBrackets();
+				break;
+					
+			case '[':
+				// adds new return state to stack
+				stack.push(new Stack.Node(stateNumber, counter));
+				
+				// [] accepts empty transaction, so add it
+				
+				// creates an State with stateNumber, if doesn't exist
+				if(automaton.getState(stateNumber) == null) {
+					// creates new State and adds to Automaton.
+					automaton.addState(new State(stateNumber));						
+				}
+				
+				// now, add it
+				automaton.getState(stateNumber).addLinkedState(counter, '_');
+				
+				counter++;
+				break;
+				
+			case ']':
+				closingBrackets();
+				break;
+			
+			case '{':
+				// add to stack, ending and starting number are the same in this case.
+				stack.push(new Node(counter, counter));
+				
+				// {} accepts empty transaction, so add it				
+				// creates an State with stateNumber, if doesn't exist
+				if(automaton.getState(stateNumber) == null) {
+					// creates new State and adds to Automaton.
+					automaton.addState(new State(stateNumber));						
+				}
+				
+				// now, add it
+				automaton.getState(stateNumber).addLinkedState(counter, '_');
+				
+				stateNumber = counter;
+				counter++;
+				break;
+			
+			case '}':
+				closingBrackets();
 				break;
 				
 			case '.':
@@ -72,6 +109,22 @@ public abstract class Main {
 				automaton.getState(stateNumber)
 					.addLinkedState(last_node
 						.getEnd(), '_');
+				break;
+				
+			case '|':
+				int endingStateNumber = stack.peek().getEnd();
+				
+				// gets state from current state number
+				State endingState = automaton.getState(endingStateNumber);
+				if(endingState == null) {
+					// creates new State and adds to Automaton.
+					endingState = automaton.addState(new State(endingStateNumber));						
+				}
+				
+				// adds an empty transaction from this state
+				automaton.getState(stateNumber).addLinkedState(endingStateNumber, '_');
+				
+				stateNumber = stack.peek().getStart(); 
 				break;
 			
 			default:
@@ -98,9 +151,18 @@ public abstract class Main {
 				}
 				break;
 			}
-		}
-		
-		
+		}	
+	}
+	
+	private static void closingBrackets() {
+		// get return state number.
+		Node top = stack.pop();
+		// creates State with ending number.
+		automaton.addState(new State(top.getEnd()));
+		// link this state with the ending state above. 
+		automaton.getState(stateNumber).addLinkedState(top.getEnd(), '_');
+		// sets new state number.
+		stateNumber = top.getEnd();
 	}
 
 }
