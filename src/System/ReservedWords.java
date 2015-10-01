@@ -27,11 +27,15 @@ public class ReservedWords {
 			line = non_terminals.readLine();
 			
 			for (int i = 1; line != null; i++) {
-				addWord(line);
-				SubMachine SM = new SubMachine(line, i);
-				firstSM.next = SM;
-				firstSM = SM;
+				if (i == 1)
+					firstSM = new SubMachine(line, i);
+				else {
+					SubMachine SM = new SubMachine(line, i);
+					SM.next = firstSM;
+					firstSM = SM;
+				}
 				
+				addWord(line);
 				line = non_terminals.readLine();
 			}
 		} catch (IOException e) {

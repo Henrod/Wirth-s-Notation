@@ -49,12 +49,17 @@ public class State {
 		return this.number;
 	}
 	
+	public int getSubMachine() {
+		return this.subMachine;
+	}
+	
 	//print all transactions from this state
 	public void print() {
 		for (LinkedState current = first;
 				current != null; 
 				current = current.nextLinkedState) 
-			System.out.println("Current: " + number + " gets \"" + current.lsTerm + "\" goes to " 
-				+ current.lsSubmachine + "," + current.lsNumber);
+			System.out.println("Current: " + subMachine + "," + number +
+					" gets \"" + current.lsTerm + "\" goes to " 
+					+ current.lsSubmachine + "," + current.lsNumber);
 	}
 }

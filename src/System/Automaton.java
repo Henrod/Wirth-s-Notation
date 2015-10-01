@@ -15,11 +15,13 @@ public class Automaton {
 		return first;
 	}
 	
-	public State getState(int number) {
+	public State getState(int number, int subMachine) {
 		for(State current = first; 
 				current.getNext() != null; 
 				current = current.getNext())
-			if (current.getNumber() == number) return current;
+			if (current.getNumber() == number && 
+				current.getSubMachine() == subMachine) 
+				return current;
 		
 		return null;
 	}
