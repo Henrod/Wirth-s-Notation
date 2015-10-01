@@ -15,10 +15,6 @@ public class Automaton {
 		return first;
 	}
 	
-	public State getFirstState() {
-		return this.first;
-	}
-	
 	public State getState(int number) {
 		for(State current = first; 
 				current.getNext() != null; 
