@@ -1,1 +1,3 @@
-X = { a | b } .
+Programa = SequenciaDeComandos END .
+SequenciaDeComandos = Comando { ; Comando } .
+Comando = [ A=X+1 ] .

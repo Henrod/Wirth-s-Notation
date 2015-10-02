@@ -19,7 +19,7 @@ public class Automaton {
 	
 	public static State getState(int number, int subMachine) {
 		for(State current = first; 
-				current.getNext() != null; 
+				current != null; 
 				current = current.getNext())
 			if (current.getNumber() == number && 
 				current.getSubMachine() == subMachine) 
@@ -60,12 +60,11 @@ public class Automaton {
 					
 					// if previous one was initial, the merged one is also initial
 					// if previous was new one must be final and initial, number==0 and finalState==true
-					if (removedStateNumber == 0)
+					if (removedStateNumber == 0) {
+						removedStateNumber = pointedState.getNumber();
+						number = 0;
 						pointedState.setNumber(0);
-					
-					int i = 0;
-					for (State cur = first; cur != null; cur = cur.getNext()) i++;
-					System.out.println("number of states = " + i);
+					}
 					
 					// gets all stated pointing to removed state and points to pointedState
 					changeAllPointers(removedStateNumber, number, submachine);
@@ -84,7 +83,7 @@ public class Automaton {
 		for (State currentSt = first; currentSt != null; currentSt = currentSt.getNext()) {
 			for (LinkedState currentLs = currentSt.first; 
 					currentLs != null; currentLs = currentLs.nextLinkedState) {
-				if (currentLs.lsNumber == removedStateNumber)
+				if (currentLs.lsNumber == removedStateNumber && currentLs.lsSubmachine == subMachine)
 					currentLs.lsNumber = number;
 			}
 		}
@@ -94,14 +93,11 @@ public class Automaton {
 	private void excludeState(int removedStateNumber, int subMachine, int number) {
 		// before removing, all the connections need to be transfered to stated merged
 		State removedState = getState(removedStateNumber, subMachine);
-		System.out.println("number removed: " + removedStateNumber + " number target: " + number);
 		State targetState = getState(number, subMachine);
 		
 		for (LinkedState ls = removedState.first; ls != null; ls = ls.nextLinkedState) {
-			if(ls.lsTerm != "_"){
-				System.out.println("number: " + ls.lsNumber + " term: " + ls.lsTerm);
+			if (ls.lsTerm != "_")
 				targetState.addLinkedState(ls.lsNumber, ls.lsTerm);
-			}
 		}
 		
 		if (first.getNumber() == removedStateNumber && 
@@ -110,8 +106,9 @@ public class Automaton {
 			return;
 		}
 		
-		for (State currentSt = first; currentSt.getNext() != null; currentSt = currentSt.getNext()) {
-			if(currentSt.getNext().getNumber() == removedStateNumber
+		for (State currentSt = first; currentSt != null; currentSt = currentSt.getNext()) {
+			if (currentSt.getNext() == null) return;
+			if (currentSt.getNext().getNumber() == removedStateNumber
 					&& currentSt.getNext().getSubMachine() == subMachine){
 				State nextState = currentSt.getNext().getNext();
 				currentSt.setNext(nextState);

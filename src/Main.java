@@ -30,7 +30,7 @@ public abstract class Main {
 		reservedWords = new ReservedWords();
 		
 		//first state with number = 0 and sub-machine = 1 and status -1 (initial state).
-		automaton.addState(new State(counter, subMachineNumber));
+		//automaton.addState(new State(counter, subMachineNumber));
 		
 		//read expression.
 		BufferedReader bf = new BufferedReader(new FileReader(new File("grammar.txt")));
@@ -48,7 +48,7 @@ public abstract class Main {
 		
 		automaton.removeIndeterminacies();
 		
-		automaton.print();
+		//automaton.print();
 	}
 	
 	private static void analyze() {
