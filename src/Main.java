@@ -29,9 +29,8 @@ public abstract class Main {
 		subMachineNumber = 1;
 		reservedWords = new ReservedWords();
 		
-		//first state with number = 0 and sub-machine = 1.
+		//first state with number = 0 and sub-machine = 1 and status -1 (initial state).
 		automaton.addState(new State(counter, subMachineNumber));
-		counter++;
 		
 		//read expression.
 		BufferedReader bf = new BufferedReader(new FileReader(new File("grammar.txt")));
@@ -43,6 +42,12 @@ public abstract class Main {
 		}
 		
 		bf.close();
+		
+		System.out.println("____________________________________________");
+		automaton.print();
+		
+		automaton.removeIndeterminacies();
+		
 		automaton.print();
 	}
 	
@@ -82,13 +87,14 @@ public abstract class Main {
 					// [] accepts empty transaction, so add it
 					
 					// creates an State with stateNumber, if doesn't exist
-					if(automaton.getState(stateNumber, subMachineNumber) == null) {
+					if(Automaton.getState(stateNumber, subMachineNumber) == null) {
 						// creates new State and adds to Automaton.
 						automaton.addState(new State(stateNumber, subMachineNumber));						
 					}
 					
 					// now, add it
-					automaton.getState(stateNumber, subMachineNumber).addLinkedState(counter, "_");
+					Automaton.getState(stateNumber, subMachineNumber).
+					addLinkedState(counter, "_");
 					
 					counter++;
 					break;
@@ -103,13 +109,14 @@ public abstract class Main {
 					
 					// {} accepts empty transaction, so add it				
 					// creates an State with stateNumber, if doesn't exist
-					if(automaton.getState(stateNumber, subMachineNumber) == null) {
+					if(Automaton.getState(stateNumber, subMachineNumber) == null) {
 						// creates new State and adds to Automaton.
 						automaton.addState(new State(stateNumber, subMachineNumber));						
 					}
 					
 					// now, add it
-					automaton.getState(stateNumber, subMachineNumber).addLinkedState(counter, "_");
+					Automaton.getState(stateNumber, subMachineNumber).
+						addLinkedState(counter, "_");
 					
 					stateNumber = counter;
 					counter++;
@@ -124,16 +131,19 @@ public abstract class Main {
 					Node last_node = stack.pop();
 					// search this state and 
 					// add empty connection pointing to last state.
-					automaton.getState(stateNumber, subMachineNumber)
+					Automaton.getState(stateNumber, subMachineNumber)
 						.addLinkedState(last_node
 							.getEnd(), "_");
+					
+					//create final state.
+					automaton.addState(new State(last_node.getEnd(), subMachineNumber));
 					break;
 					
 				case "|":
 					int endingStateNumber = stack.peek().getEnd();
 					
 					// gets state from current state number
-					State endingState = automaton.getState(endingStateNumber, subMachineNumber);
+					State endingState = Automaton.getState(endingStateNumber, subMachineNumber);
 					if(endingState == null) {
 						// creates new State and adds to Automaton.
 						endingState = automaton.addState(new State(endingStateNumber, 
@@ -141,26 +151,30 @@ public abstract class Main {
 					}
 					
 					// adds an empty transaction from this state
-					automaton.getState(stateNumber, subMachineNumber)
-					.addLinkedState(endingStateNumber, "_");
+					Automaton.getState(stateNumber, subMachineNumber)
+						.addLinkedState(endingStateNumber, "_");
 					
 					stateNumber = stack.peek().getStart(); 
 					break;
 				
 				default:
 					// check if state already exists
-					State currentState = automaton.getState(stateNumber, subMachineNumber);
+					State currentState = Automaton.getState(stateNumber, subMachineNumber);
 					if (currentState == null) {
 						// creates new State and adds to Automaton.
-						currentState = automaton.addState(
-								new State(stateNumber, subMachineNumber));						
+						if (counter == 0)
+							currentState = automaton.addState(
+									new State(stateNumber, subMachineNumber));
+						else 
+							currentState = automaton.addState(
+									new State(stateNumber, subMachineNumber));
 					}
-					
-					// creates State that this is linked to.
-					automaton.addState(new State(counter, subMachineNumber));
 					
 					// sets that states's next = new inserted state.
 					if (counter != 0) {
+						// creates State that this is linked to.
+						if(Automaton.getState(counter, subMachineNumber) == null)
+							automaton.addState(new State(counter, subMachineNumber));
 						currentState.addLinkedState(counter, atom);
 						stateNumber = counter;
 					}
@@ -174,11 +188,11 @@ public abstract class Main {
 		// get return state number.
 		Node top = stack.pop();
 		// creates State with ending number.
-		automaton.addState(new State(top.getEnd(), subMachineNumber));
+		if(Automaton.getState(top.getEnd(), subMachineNumber) == null)
+			automaton.addState(new State(top.getEnd(), subMachineNumber));
 		// link this state with the ending state above. 
-		automaton.getState(stateNumber, subMachineNumber).addLinkedState(top.getEnd(), "_");
+		Automaton.getState(stateNumber, subMachineNumber).addLinkedState(top.getEnd(), "_");
 		// sets new state number.
 		stateNumber = top.getEnd();
 	}
-
 }
