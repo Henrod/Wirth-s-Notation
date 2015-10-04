@@ -1,13 +1,10 @@
+package System;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
-import System.Automaton;
-import System.Stack;
 import System.Stack.Node;
-import System.State;
-import System.ReservedWords;
 
 public abstract class Main {
 	
@@ -19,6 +16,9 @@ public abstract class Main {
 	public static Stack stack;
 	public static Automaton automaton;
 	public static ReservedWords reservedWords;
+	public static boolean equalInExpression;	// keeps if the signal "=" is in wirth's expression or in the automaton. 
+												//In this last case, it is treated as an terminal.
+	public static Atoms vocabulary;	//keeps all atoms in the automaton, terminals and non-terminals.
 	
 	public static void main(String[] args) throws IOException {
 		//initialize variables. 
@@ -28,9 +28,7 @@ public abstract class Main {
 		stateNumber = 0;
 		subMachineNumber = 1;
 		reservedWords = new ReservedWords();
-		
-		//first state with number = 0 and sub-machine = 1 and status -1 (initial state).
-		//automaton.addState(new State(counter, subMachineNumber));
+		vocabulary = new Atoms();
 		
 		//read expression.
 		BufferedReader bf = new BufferedReader(new FileReader(new File("grammar.txt")));
@@ -45,10 +43,8 @@ public abstract class Main {
 		
 		System.out.println("____________________________________________");
 		automaton.print();
-		
 		automaton.removeIndeterminacies();
-		
-		//automaton.print();
+		Automaton.generateOutput();
 	}
 	
 	private static void analyze() {
@@ -56,6 +52,7 @@ public abstract class Main {
 			stack.print();
 			
 			String[] atoms = expression.split("\\s+");
+			equalInExpression = false;
 			
 			// set numbers
 			subMachineNumber = reservedWords.getSubMachine(atoms[0]);
@@ -68,10 +65,6 @@ public abstract class Main {
 				subMachineNumber + "," + stateNumber + "; atom = \"" + atom + "\"");
 				
 				switch (atom) {
-				case "=":
-					stack.push(new Stack.Node(stateNumber, counter));
-					counter++;
-					break;
 				case "(":
 					stack.push(new Stack.Node(stateNumber, counter));
 					counter++;
@@ -156,8 +149,15 @@ public abstract class Main {
 					
 					stateNumber = stack.peek().getStart(); 
 					break;
-				
+				case "=":
+					if (!equalInExpression){
+						stack.push(new Stack.Node(stateNumber, counter));
+						counter++;
+						equalInExpression = true;
+						break;
+					}
 				default:
+					vocabulary.addAtom(atom);
 					// check if state already exists
 					State currentState = Automaton.getState(stateNumber, subMachineNumber);
 					if (currentState == null) {

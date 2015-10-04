@@ -1,3 +1,4 @@
-Programa
-SequenciaDeComandos
-Comando
+Comparacao
+Condicao
+Expressao
+Sinal
