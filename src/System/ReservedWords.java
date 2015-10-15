@@ -8,11 +8,13 @@ import java.io.IOException;
 // This class keeps a list of reserved words, including the compiler and name of variables and labels.
 public class ReservedWords {
 	Word first;
-	SubMachine firstSM; 
+	SubMachine firstSM;
+	int submachineCount;
 	
 	public ReservedWords() {
-		first = new Word("END");
-		addWord("READ");
+		first = new Word("");
+		submachineCount = 0;
+		/*addWord("READ");
 		addWord("PRINT");
 		addWord("IF");
 		addWord("THEN");
@@ -41,12 +43,27 @@ public class ReservedWords {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		*/
 	}
 	
 	public void addWord(String strWord) {
 		Word new_word = new Word(strWord);
 		new_word.next = first;
 		first = new_word;
+	}
+	
+	public int addNonTerminal(String nTerminal) {
+		if (firstSM == null)
+			firstSM = new SubMachine(nTerminal, ++submachineCount);
+		else {
+			SubMachine SM = new SubMachine(nTerminal, ++submachineCount);
+			SM.next = firstSM;
+			firstSM = SM;
+		}
+		
+		addWord(nTerminal);
+		
+		return submachineCount;
 	}
 	
 	// search if the words exists as a reserved word in the language or code.

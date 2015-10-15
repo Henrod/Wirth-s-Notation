@@ -13,6 +13,7 @@ import System.Main;
 // This class has all states of the automaton in a linked list of States
 public class Automaton {
 	private static State first;
+	private int[] v;
 	
 	public Automaton() {
 		first = null;
@@ -127,13 +128,21 @@ public class Automaton {
 	// generates text output in the expected format.
 		public static void generateOutput() throws IOException {
 			Writer writer;
-				writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("machine.txt"), "utf-8"));
-				writeStates(writer);
-				writer.write("y\n");
-				writeAtoms(writer);
-				writeTransactions(writer);
-				
-				writer.close();
+			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("machine.txt"), "utf-8"));
+			writeStates(writer);
+			writer.write("y\n");
+			writeAtoms(writer);
+			writeTransactions(writer);
+			
+			writer.close();
+			
+			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("../Wirth's Grammar/machine.txt WirthGrammarMachine.txt"), "utf-8"));
+			writeStates(writer);
+			writer.write("y\n");
+			writeAtoms(writer);
+			writeTransactions(writer);
+			
+			writer.close();
 		}
 		
 		private static void writeStates(Writer writer) throws IOException {
@@ -156,7 +165,6 @@ public class Automaton {
 			String transaction = "";
 			boolean writeReturnState = true;
 			for (State currentSt = first; currentSt != null; currentSt = currentSt.getNext()) {
-				System.out.println(currentSt.getSubMachine() +","+ currentSt.getNumber() + " " + String.valueOf(currentSt.finalState && writeReturnState));
 				writeReturnState = true;
 				for (LinkedState ls = currentSt.first; ls != null; ls = ls.nextLinkedState) 
 					if (Main.reservedWords.getSubMachine(ls.lsTerm) != -1) { //check if the atom for transaction is a non-terminal

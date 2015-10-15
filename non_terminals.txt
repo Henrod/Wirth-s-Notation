@@ -1,4 +1,0 @@
-Comparacao
-Condicao
-Expressao
-Sinal

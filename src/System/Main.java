@@ -55,7 +55,7 @@ public abstract class Main {
 			equalInExpression = false;
 			
 			// set numbers
-			subMachineNumber = reservedWords.getSubMachine(atoms[0]);
+			subMachineNumber = reservedWords.addNonTerminal(atoms[0]);
 			stateNumber = counter = 0;
 			
 			
@@ -157,6 +157,9 @@ public abstract class Main {
 						break;
 					}
 				default:
+					if(atom.charAt(0) == '"') 	
+						atom = atom.substring(1, atom.length() - 1);
+					
 					vocabulary.addAtom(atom);
 					// check if state already exists
 					State currentState = Automaton.getState(stateNumber, subMachineNumber);
