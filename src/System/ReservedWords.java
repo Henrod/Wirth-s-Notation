@@ -14,36 +14,6 @@ public class ReservedWords {
 	public ReservedWords() {
 		first = new Word("");
 		submachineCount = 0;
-		/*addWord("READ");
-		addWord("PRINT");
-		addWord("IF");
-		addWord("THEN");
-		addWord("ELSE");
-		addWord("AND");
-		addWord("OR");
-		
-		BufferedReader non_terminals;
-		String line = "";
-		try {
-			non_terminals = new BufferedReader(new FileReader(new File("non_terminals.txt")));
-			line = non_terminals.readLine();
-			
-			for (int i = 1; line != null; i++) {
-				if (i == 1)
-					firstSM = new SubMachine(line, i);
-				else {
-					SubMachine SM = new SubMachine(line, i);
-					SM.next = firstSM;
-					firstSM = SM;
-				}
-				
-				addWord(line);
-				line = non_terminals.readLine();
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		*/
 	}
 	
 	public void addWord(String strWord) {

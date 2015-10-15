@@ -13,7 +13,6 @@ import System.Main;
 // This class has all states of the automaton in a linked list of States
 public class Automaton {
 	private static State first;
-	private int[] v;
 	
 	public Automaton() {
 		first = null;
